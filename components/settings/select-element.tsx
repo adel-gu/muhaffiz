@@ -47,17 +47,15 @@ export function SelectElement({
         <SelectContent>
           {options.map((option) => (
             <SelectItem key={option.value} value={option.value}>
-              <div className='flex items-center'>
-                <div className='space-x-1'>
+              <div className="flex items-center">
+                <div className="space-x-1">
                   <span className="font-medium text-foreground">{option.label}</span>
-              {option.subLabel && (
-                <span className="text-xs text-muted-foreground">({option.subLabel})</span>
-              )}
+                  {option.subLabel && (
+                    <span className="text-xs text-muted-foreground">({option.subLabel})</span>
+                  )}
                 </div>
                 {option.meta && (
-                  <span className="font-serif text-lg text-primary/80 pl-2">
-                    {option.meta}
-                  </span>
+                  <span className="font-serif text-lg text-primary/80 pl-2">{option.meta}</span>
                 )}
               </div>
             </SelectItem>
