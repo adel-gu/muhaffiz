@@ -3,64 +3,19 @@
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
 
+import { Chapter, RecitationResource } from '@quranjs/api';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { InputNumElement } from '@/components/settings/input-num-element';
 import { SelectElement, SelectOption } from '@/components/settings/select-element';
 
-const CHAPTERS = [
-  {
-    id: 1,
-    nameSimple: 'Al-Fatihah',
-    nameArabic: 'الفاتحة',
-    translatedName: { name: 'The Opener' },
-    versesCount: 7,
-  },
-  {
-    id: 2,
-    nameSimple: 'Al-Baqarah',
-    nameArabic: 'البقرة',
-    translatedName: { name: 'The Cow' },
-    versesCount: 286,
-  },
-  {
-    id: 3,
-    nameSimple: "Ali 'Imran",
-    nameArabic: 'آل عمران',
-    translatedName: { name: 'Family of Imran' },
-    versesCount: 200,
-  },
-  {
-    id: 18,
-    nameSimple: 'Al-Kahf',
-    nameArabic: 'الكهف',
-    translatedName: { name: 'The Cave' },
-    versesCount: 110,
-  },
-];
+interface MemorizationSettingsFormProps {
+  chapters: Chapter[];
+  reciters: RecitationResource[];
+}
 
-const RECITERS = [
-  {
-    id: 1,
-    reciterName: 'Mishary Rashid Alafasy',
-    style: 'Murattal',
-    translatedName: { name: 'Mishary Rashid Alafasy' },
-  },
-  {
-    id: 2,
-    reciterName: 'AbdulBaset AbdulSamad',
-    style: 'Murattal',
-    translatedName: { name: 'AbdulBaset AbdulSamad' },
-  },
-  {
-    id: 3,
-    reciterName: 'Mahmoud Khalil Al-Hussary',
-    style: 'Muallim',
-    translatedName: { name: 'Mahmoud Khalil Al-Hussary' },
-  },
-];
-
-export function MemorizationSettingsForm() {
+export function MemorizationSettingsForm({ chapters, reciters }: MemorizationSettingsFormProps) {
   const router = useRouter();
 
   // Form State
@@ -68,29 +23,29 @@ export function MemorizationSettingsForm() {
   const [startAyah, setStartAyah] = React.useState<number>(1);
   const [endAyah, setEndAyah] = React.useState<number>(5);
   const [reciter, setReciter] = React.useState<string>('1');
-  const [repetitions, setRepetitions] = React.useState<number>(3);
+  const [repetitions, setRepetitions] = React.useState<number>(10);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   // Data Transformation: Convert raw data to SelectOption[]
   const surahOptions: SelectOption[] = React.useMemo(
     () =>
-      CHAPTERS.map((c) => ({
+      chapters.map((c) => ({
         value: c.id.toString(),
         label: `${c.id}. ${c.nameSimple}`,
         subLabel: c.translatedName.name,
         meta: c.nameArabic,
       })),
-    [],
+    [chapters],
   );
 
   const reciterOptions: SelectOption[] = React.useMemo(
     () =>
-      RECITERS.map((r) => ({
-        value: r.id.toString(),
-        label: r.reciterName,
-        subLabel: r.style,
+      reciters.map((r) => ({
+        value: r.id!.toString(),
+        label: `${r.id!}. ${r.reciterName!}`,
+        subLabel: r.style!,
       })),
-    [],
+    [reciters],
   );
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -105,8 +60,6 @@ export function MemorizationSettingsForm() {
       reciter,
       reps: repetitions.toString(),
     });
-
-    const url = new URL("/memorize/session")
 
     // Simulate a brief delay for better UX
     setTimeout(() => {
