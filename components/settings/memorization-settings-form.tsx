@@ -63,7 +63,7 @@ export function MemorizationSettingsForm({ chapters, reciters }: MemorizationSet
 
     // Simulate a brief delay for better UX
     setTimeout(() => {
-      router.push(`/memorize/session?${params.toString()}`);
+      router.push(`/memorization/session?${params.toString()}`);
       setIsSubmitting(false);
     }, 300);
   };
