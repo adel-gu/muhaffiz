@@ -1,4 +1,4 @@
-import { MemorizationSettingsForm } from '@/components/settings/memorization-settings-form';
+import { MemorizationSettingsForm } from '@/components/shared/memorization-settings-form';
 import { getChapters, getReciters } from '@/lib/quran-foundation-api/data';
 
 export default async function page() {
