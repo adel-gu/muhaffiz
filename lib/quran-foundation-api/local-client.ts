@@ -1,4 +1,16 @@
-import { ChapterRecitation, TokenResponse } from '@quranjs/api';
+import { ChapterRecitation, Segment, TokenResponse } from '@quranjs/api';
+
+type Timestamp = {
+  verse_key: string;
+  timestamp_from: number;
+  timestamp_to: number;
+  duration: number;
+  segments: Segment[];
+};
+
+export type ChapterRecitationWithSegments = ChapterRecitation & {
+  timestamps: Timestamp[];
+};
 
 export class LocalQuranApiClient {
   private clientId: string;
@@ -47,7 +59,7 @@ export class LocalQuranApiClient {
     chapterId: string,
     recitationId: string,
     segments: boolean = true,
-  ): Promise<ChapterRecitation> {
+  ): Promise<ChapterRecitationWithSegments> {
     const token = await this.getAccessToken();
 
     const url = new URL(`${this.apiBaseUrl}/chapter_recitations/${recitationId}/${chapterId}`);
@@ -67,12 +79,14 @@ export class LocalQuranApiClient {
     }
 
     const data = await response.json();
+    console.log('Data: ', data);
     return {
       id: data.audio_file.id,
       audioUrl: data.audio_file.audio_url,
       chapterId: data.audio_file.chapter_id,
       fileSize: data.audio_file.file_size,
       format: data.audio_file.format,
+      timestamps: data.audio_file.timestamps,
     };
   }
 }
