@@ -15,29 +15,41 @@ export function Actions({
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  // When playback starts, force the audio to the "from" point
+  // Track whether we've already "entered" the slice
+  const hasStartedRef = useRef(false);
+
   const togglePlay = () => {
     const el = audioRef.current;
     if (!el) return;
 
     if (isPlaying) {
       el.pause();
-    } else {
-      el.currentTime = range.from / 1000; // timestamps are ms, audio wants seconds
-      el.play();
+      return;
     }
+
+    // Only jump to start *once*
+    if (!hasStartedRef.current) {
+      el.currentTime = range.from / 1000;
+      hasStartedRef.current = true;
+    }
+
+    el.play();
   };
 
-  // Watch playback and stop at the "to" point
   const handleTimeUpdate = () => {
     const el = audioRef.current;
     if (!el) return;
 
     const currentMs = el.currentTime * 1000;
+
     if (currentMs >= range.to) {
+      // Stop and reset state (but NOT the hasStarted flag)
       el.pause();
-      el.currentTime = range.from / 1000; // rewind to start of allowed range
       setIsPlaying(false);
+
+      // Reset for next full replay of the slice
+      hasStartedRef.current = false;
+      el.currentTime = range.from / 1000;
     }
   };
 
