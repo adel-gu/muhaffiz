@@ -17,7 +17,15 @@ export default async function page(props: { searchParams: SearchParams }) {
     recitationId: reciter as string,
   });
 
-  console.log('VersesAudio: ', versesAudio);
+  const timestamps = versesAudio.timestamps;
+
+  const startTs = timestamps.find((t) => t.verse_key === `${surah}:${start}`);
+  const endTs = timestamps.find((t) => t.verse_key === `${surah}:${end}`);
+
+  const range = {
+    from: startTs?.timestamp_from ?? 0,
+    to: endTs?.timestamp_to ?? Infinity,
+  };
 
   return (
     <main>
@@ -26,7 +34,7 @@ export default async function page(props: { searchParams: SearchParams }) {
         <Progress />
         <QuranScript verses={verses} />
       </div>
-      <Actions audio={versesAudio} />
+      <Actions audio={versesAudio} range={range} />
     </main>
   );
 }
