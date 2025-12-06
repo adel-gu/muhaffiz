@@ -1,4 +1,4 @@
-import { AudioResponse, TokenResponse } from '@quranjs/api';
+import { ChapterRecitation, TokenResponse } from '@quranjs/api';
 
 export class LocalQuranApiClient {
   private clientId: string;
@@ -47,10 +47,10 @@ export class LocalQuranApiClient {
     chapterId: string,
     recitationId: string,
     segments: boolean = true,
-  ): Promise<AudioResponse> {
+  ): Promise<ChapterRecitation> {
     const token = await this.getAccessToken();
 
-    const url = new URL(`${this.apiBaseUrl}/chapter_recitations/${chapterId}/${recitationId}`);
+    const url = new URL(`${this.apiBaseUrl}/chapter_recitations/${recitationId}/${chapterId}`);
     if (segments) url.searchParams.append('segments', 'true');
 
     const response = await fetch(url.toString(), {
@@ -67,7 +67,13 @@ export class LocalQuranApiClient {
     }
 
     const data = await response.json();
-    return data.audio_file;
+    return {
+      id: data.audio_file.id,
+      audioUrl: data.audio_file.audio_url,
+      chapterId: data.audio_file.chapter_id,
+      fileSize: data.audio_file.file_size,
+      format: data.audio_file.format,
+    };
   }
 }
 
