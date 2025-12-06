@@ -1,6 +1,7 @@
 import { Language, QuranClient } from '@quranjs/api';
+import { getLocalQuranClient } from './local-client';
 
-const quranClient = new QuranClient({
+export const quranClient = new QuranClient({
   clientId: process.env.QURAN_CLIENT_ID!,
   clientSecret: process.env.QURAN_CLIENT_SECRET!,
   defaults: {
@@ -8,4 +9,4 @@ const quranClient = new QuranClient({
   },
 });
 
-export default quranClient;
+export const localQuranClient = getLocalQuranClient();
