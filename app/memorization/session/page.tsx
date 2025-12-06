@@ -1,10 +1,24 @@
+import { ChapterId } from '@quranjs/api';
+import { getVerses, getVersesAudio } from '@/lib/quran-foundation-api/data';
+
 import { Header } from '@/components/session/header';
 import { QuranScript } from '@/components/session/quran-script';
 import { Progress } from '@/components/session/progress';
-import { getVerses } from '@/lib/quran-foundation-api/data';
+import { Actions } from '@/components/session/actions';
 
-export default async function page() {
-  const verses = await getVerses('2', 1, 7);
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
+
+export default async function page(props: { searchParams: SearchParams }) {
+  const { surah, start, end, reciter, reps } = await props.searchParams;
+
+  const verses = await getVerses(surah as ChapterId, Number(start), Number(end));
+  const versesAudio = await getVersesAudio({
+    chapterId: `${surah}`,
+    recitationId: reciter as string,
+  });
+
+  console.log('VersesAudio: ', versesAudio);
+
   return (
     <main>
       <Header />
@@ -12,7 +26,7 @@ export default async function page() {
         <Progress />
         <QuranScript verses={verses} />
       </div>
-      <div>ACTIONS</div>
+      <Actions audio={versesAudio} />
     </main>
   );
 }
