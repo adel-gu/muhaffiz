@@ -1,3 +1,5 @@
+import { Suspense } from 'react';
+
 import type { Metadata } from 'next';
 
 import { ChapterId } from '@quranjs/api';
@@ -32,7 +34,9 @@ export default async function page(props: { searchParams: SearchParams }) {
   return (
     <div>
       <Header />
-      <SessionContainer verses={verses} audioData={versesAudio} range={range} reps={repsCount} />
+      <Suspense>
+        <SessionContainer verses={verses} audioData={versesAudio} range={range} reps={repsCount} />
+      </Suspense>
     </div>
   );
 }

@@ -1,3 +1,5 @@
+import { Suspense } from 'react';
+
 import { BookOpen, Settings } from 'lucide-react';
 import { getChapters, getReciters } from '@/lib/quran-foundation-api/data';
 import {
@@ -37,7 +39,9 @@ export async function Header() {
           <SheetHeader>
             <SheetTitle>Configure your Hifz session settings below.</SheetTitle>
             <SheetDescription>
-              <MemorizationSettingsForm chapters={chapters} reciters={reciters} isDialog={true} />
+              <Suspense>
+                <MemorizationSettingsForm chapters={chapters} reciters={reciters} isDialog={true} />
+              </Suspense>
             </SheetDescription>
           </SheetHeader>
         </SheetContent>

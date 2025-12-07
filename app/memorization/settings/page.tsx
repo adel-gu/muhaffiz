@@ -1,3 +1,5 @@
+import { Suspense } from 'react';
+
 import { MemorizationSettingsForm } from '@/components/shared/memorization-settings-form';
 import { getChapters, getReciters } from '@/lib/quran-foundation-api/data';
 
@@ -18,8 +20,9 @@ export default async function page() {
         </h1>
         <p className="text-muted-foreground">Configure your Hifz session settings below.</p>
       </div>
-
-      <MemorizationSettingsForm chapters={chapters} reciters={reciters} />
+      <Suspense>
+        <MemorizationSettingsForm chapters={chapters} reciters={reciters} />
+      </Suspense>
     </main>
   );
 }
