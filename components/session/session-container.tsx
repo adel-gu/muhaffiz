@@ -38,7 +38,7 @@ export function SessionContainer({ verses, audioData, range, reps }: SessionCont
       <div className="container mx-auto px-4 py-8 space-y-8 flex-1">
         {/* STATUS INDICATOR (Temporary, to show reps counting) */}
         <div className="text-center p-4 bg-muted/20 rounded-lg border space-y-1">
-          {!engine.isComplete && <p className="text-sm text-muted-foreground">{instruction}</p>}
+          {!engine.isComplete && <p className="text-xl text-primary">{instruction}</p>}
 
           {!engine.isComplete && (
             <p className="text-xs text-muted-foreground">
