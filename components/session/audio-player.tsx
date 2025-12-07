@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { PlayIcon, PauseIcon } from 'lucide-react';
 import { ChapterRecitationWithSegments } from '@/lib/quran-foundation-api/local-client';
 
-export function Actions({
+export function AudioPlayer({
   audio,
   range,
 }: {
