@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import { Chapter, RecitationResource } from '@quranjs/api';
 
@@ -17,13 +17,20 @@ interface MemorizationSettingsFormProps {
 
 export function MemorizationSettingsForm({ chapters, reciters }: MemorizationSettingsFormProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   // Form State
-  const [surah, setSurah] = React.useState<string>('1');
-  const [startAyah, setStartAyah] = React.useState<number>(1);
-  const [endAyah, setEndAyah] = React.useState<number>(5);
-  const [reciter, setReciter] = React.useState<string>('1');
-  const [repetitions, setRepetitions] = React.useState<number>(10);
+  const [surah, setSurah] = React.useState<string>(searchParams.get('surah') ?? '1');
+  const [startAyah, setStartAyah] = React.useState<number>(
+    searchParams.has('start') ? Number(searchParams.get('start')) : 1,
+  );
+  const [endAyah, setEndAyah] = React.useState<number>(
+    searchParams.has('end') ? Number(searchParams.get('end')) : 5,
+  );
+  const [reciter, setReciter] = React.useState<string>(searchParams.get('reciter') ?? '1');
+  const [repetitions, setRepetitions] = React.useState<number>(
+    searchParams.has('reps') ? Number(searchParams.get('reps')) : 10,
+  );
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   // Data Transformation: Convert raw data to SelectOption[]
@@ -63,10 +70,24 @@ export function MemorizationSettingsForm({ chapters, reciters }: MemorizationSet
 
     // Simulate a brief delay for better UX
     setTimeout(() => {
-      router.push(`/memorization/session?${params.toString()}`);
+      router.replace(`/memorization/session?${params.toString()}`);
       setIsSubmitting(false);
     }, 300);
   };
+
+  React.useEffect(() => {
+    const s = searchParams.get('surah');
+    const st = searchParams.get('start');
+    const e = searchParams.get('end');
+    const r = searchParams.get('reciter');
+    const rep = searchParams.get('reps');
+
+    if (s) setSurah(s);
+    if (st) setStartAyah(Number(st));
+    if (e) setEndAyah(Number(e));
+    if (r) setReciter(r);
+    if (rep) setRepetitions(Number(rep));
+  }, [searchParams]);
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full max-w-2xl mx-auto">
