@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 import { Chapter, RecitationResource } from '@quranjs/api';
 
@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { InputNumElement } from '@/components/settings/input-num-element';
 import { SelectElement, SelectOption } from '@/components/settings/select-element';
+import Link from 'next/link';
 
 interface MemorizationSettingsFormProps {
   chapters: Chapter[];
@@ -16,7 +17,6 @@ interface MemorizationSettingsFormProps {
 }
 
 export function MemorizationSettingsForm({ chapters, reciters }: MemorizationSettingsFormProps) {
-  const router = useRouter();
   const searchParams = useSearchParams();
 
   // Form State
@@ -31,7 +31,6 @@ export function MemorizationSettingsForm({ chapters, reciters }: MemorizationSet
   const [repetitions, setRepetitions] = React.useState<number>(
     searchParams.has('reps') ? Number(searchParams.get('reps')) : 10,
   );
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   // Data Transformation: Convert raw data to SelectOption[]
   const surahOptions: SelectOption[] = React.useMemo(
@@ -55,25 +54,13 @@ export function MemorizationSettingsForm({ chapters, reciters }: MemorizationSet
     [reciters],
   );
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    // Build Query Params
-    const params = new URLSearchParams({
-      surah,
-      start: startAyah.toString(),
-      end: endAyah.toString(),
-      reciter,
-      reps: repetitions.toString(),
-    });
-
-    // Simulate a brief delay for better UX
-    setTimeout(() => {
-      router.replace(`/memorization/session?${params.toString()}`);
-      setIsSubmitting(false);
-    }, 300);
-  };
+  const params = new URLSearchParams({
+    surah,
+    start: startAyah.toString(),
+    end: endAyah.toString(),
+    reciter,
+    reps: repetitions.toString(),
+  });
 
   React.useEffect(() => {
     const s = searchParams.get('surah');
@@ -90,7 +77,7 @@ export function MemorizationSettingsForm({ chapters, reciters }: MemorizationSet
   }, [searchParams]);
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full max-w-2xl mx-auto">
+    <div className="flex flex-col gap-6 w-full max-w-2xl mx-auto">
       {/* Card 1: Content Selection */}
       <Card className="rounded-xl shadow-sm border-none">
         <CardHeader>
@@ -156,16 +143,11 @@ export function MemorizationSettingsForm({ chapters, reciters }: MemorizationSet
 
       {/* Submit Action */}
       <Button
-        type="submit"
-        disabled={isSubmitting}
+        asChild
         className="py-6 text-lg font-bold tracking-wide shadow-lg shadow-primary/20 transition-all active:scale-[0.99]"
       >
-        {isSubmitting ? (
-          <span className="flex items-center gap-2">Loading...</span>
-        ) : (
-          <span className="flex items-center gap-2">Start Session</span>
-        )}
+        <Link href={`/memorization/session?${params.toString()}`}>Set settings</Link>
       </Button>
-    </form>
+    </div>
   );
 }
