@@ -37,7 +37,7 @@ export async function Header() {
           <SheetHeader>
             <SheetTitle>Configure your Hifz session settings below.</SheetTitle>
             <SheetDescription>
-              <MemorizationSettingsForm chapters={chapters} reciters={reciters} />
+              <MemorizationSettingsForm chapters={chapters} reciters={reciters} isDialog={true} />
             </SheetDescription>
           </SheetHeader>
         </SheetContent>

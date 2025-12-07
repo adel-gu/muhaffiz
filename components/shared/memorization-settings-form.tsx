@@ -15,11 +15,16 @@ import { SelectElement, SelectOption } from '@/components/settings/select-elemen
 interface MemorizationSettingsFormProps {
   chapters: Chapter[];
   reciters: RecitationResource[];
+  isDialog?: boolean;
 }
 
 const RANGE_SIZE = 10;
 
-export function MemorizationSettingsForm({ chapters, reciters }: MemorizationSettingsFormProps) {
+export function MemorizationSettingsForm({
+  chapters,
+  reciters,
+  isDialog = false,
+}: MemorizationSettingsFormProps) {
   const searchParams = useSearchParams();
 
   // Form State
@@ -199,14 +204,23 @@ export function MemorizationSettingsForm({ chapters, reciters }: MemorizationSet
       </Card>
 
       {/* Submit Action */}
-      <SheetClose asChild>
+      {isDialog ? (
+        <SheetClose asChild>
+          <Button
+            asChild
+            className="py-6 text-lg font-bold tracking-wide shadow-lg shadow-primary/20 transition-all active:scale-[0.99]"
+          >
+            <Link href={`/memorization/session?${params.toString()}`}>Set settings</Link>
+          </Button>
+        </SheetClose>
+      ) : (
         <Button
           asChild
           className="py-6 text-lg font-bold tracking-wide shadow-lg shadow-primary/20 transition-all active:scale-[0.99]"
         >
           <Link href={`/memorization/session?${params.toString()}`}>Set settings</Link>
         </Button>
-      </SheetClose>
+      )}
     </div>
   );
 }

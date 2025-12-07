@@ -1,3 +1,5 @@
+import type { Metadata } from 'next';
+
 import { ChapterId } from '@quranjs/api';
 import { getVerses, getVersesAudio } from '@/lib/quran-foundation-api/data';
 
@@ -33,4 +35,17 @@ export default async function page(props: { searchParams: SearchParams }) {
       <SessionContainer verses={verses} audioData={versesAudio} range={range} reps={repsCount} />
     </div>
   );
+}
+
+export async function generateMetadata(props: { searchParams: SearchParams }): Promise<Metadata> {
+  const { surah, start, end } = await props.searchParams;
+
+  const range = surah && start && end ? `Surah ${surah}: Ayah ${start}–${end}` : null;
+
+  return {
+    title: range ? `${range} Memorization Session` : 'Memorization Session',
+    description: range
+      ? `Memorize ${range} with structured repetition, cumulative recall, and audio recitations.`
+      : 'Memorize Quran ayat with structured repetition, cumulative recall, and audio recitations.',
+  };
 }

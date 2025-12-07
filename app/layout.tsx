@@ -13,8 +13,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Muhaffiz',
-  description: 'Memorize the Quran ayah by ayah.',
+  title: {
+    default: 'Muhaffiz – Memorize the Quran with mastery',
+    template: '%s | Muhaffiz',
+  },
+  description:
+    'Memorize the Quran ayah by ayah with repetition cycles, cumulative recall, audio reciters and structured progress.',
+  applicationName: 'Muhaffiz',
 };
 
 export default function RootLayout({

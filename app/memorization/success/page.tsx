@@ -6,6 +6,12 @@ import { CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
+export const metadata = {
+  title: 'Session Complete',
+  description:
+    'You completed your memorization session. Review your progress and begin your next Quran memorization cycle.',
+};
+
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
 export default async function page(props: { searchParams: SearchParams }) {
