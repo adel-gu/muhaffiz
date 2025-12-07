@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/sheet';
 import { Button } from '../ui/button';
 import { MemorizationSettingsForm } from '../shared/memorization-settings-form';
+import Link from 'next/link';
 
 export async function Header() {
   const [chapters, reciters] = await Promise.all([getChapters(), getReciters()]);
@@ -17,10 +18,14 @@ export async function Header() {
   return (
     <header className="flex items-center justify-between border-b py-2 px-4">
       <div className="flex items-center gap-2 group cursor-default">
-        <div className="p-2 bg-secondary rounded-lg">
-          <BookOpen className="h-6 w-6 text-primary" />
-        </div>
-        <h2 className="text-xl font-bold tracking-tight text-foreground">Muhaffiz</h2>
+        <Button variant="link" asChild>
+          <Link href="/">
+            <div className="p-2 bg-secondary rounded-lg">
+              <BookOpen className="h-6 w-6 text-primary" />
+            </div>
+            <h2 className="text-xl font-bold tracking-tight text-foreground">Muhaffiz</h2>
+          </Link>
+        </Button>
       </div>
       <Sheet>
         <SheetTrigger asChild>
