@@ -1,61 +1,82 @@
-// src/hooks/use-memorization.ts
 import { useState } from 'react';
 
 export type Phase = 'FAMILIARIZATION' | 'MEMORIZATION' | 'COMPLETE';
+type MemorizationMode = 'INDIVIDUAL' | 'CUMULATIVE';
 
 interface UseMemorizationProps {
-  targetReps: number; // e.g., 10 repetitions needed per phase
+  targetReps: number;
+  totalVerses: number;
 }
 
-export function useMemorization({ targetReps }: UseMemorizationProps) {
+export function useMemorization({ targetReps, totalVerses }: UseMemorizationProps) {
   const [phase, setPhase] = useState<Phase>('FAMILIARIZATION');
   const [currentReps, setCurrentReps] = useState(0);
 
-  // Helper to map Phase to the Step Number needed by your Progress component
-  const currentStep = (() => {
-    switch (phase) {
-      case 'FAMILIARIZATION':
-        return 1;
-      case 'MEMORIZATION':
-        return 2;
-      case 'COMPLETE':
-        return 3;
-    }
-  })();
+  const [currentAyahIndex, setCurrentAyahIndex] = useState(0);
+  const [mode, setMode] = useState<MemorizationMode>('INDIVIDUAL');
+  const [hidden, setHidden] = useState(false); // Controls blur
+
+  const startHiding = () => setHidden(true);
+  const showText = () => setHidden(false);
 
   const advance = () => {
-    // Logic: Increment Reps -> Check if Target Met -> Switch Phase
-
     if (phase === 'FAMILIARIZATION') {
-      if (currentReps + 1 >= targetReps) {
-        // Phase 1 Done -> Move to Phase 2
+      const next = currentReps + 1;
+      if (next >= targetReps) {
         setPhase('MEMORIZATION');
-        setCurrentReps(0); // Reset counter for next phase
+        setCurrentReps(0);
+        setHidden(true); // start blurred
       } else {
-        setCurrentReps((prev) => prev + 1);
+        setCurrentReps(next);
       }
       return;
     }
 
     if (phase === 'MEMORIZATION') {
-      if (currentReps + 1 >= targetReps) {
-        // Phase 2 Done -> Complete
-        setPhase('COMPLETE');
-      } else {
-        setCurrentReps((prev) => prev + 1);
+      const next = currentReps + 1;
+      if (next < targetReps) {
+        setCurrentReps(next);
+        return;
       }
-      return;
+
+      // reps achieved for this task → reset
+      setCurrentReps(0);
+
+      if (mode === 'INDIVIDUAL') {
+        // Done memorizing one ayah → now cumulative recall for all up to this ayah
+        setMode('CUMULATIVE');
+        return;
+      }
+
+      if (mode === 'CUMULATIVE') {
+        // Finished cumulative recall → move to next ayah
+        const nextAyah = currentAyahIndex + 1;
+
+        if (nextAyah >= totalVerses) {
+          setPhase('COMPLETE');
+          return;
+        }
+
+        setCurrentAyahIndex(nextAyah);
+        setMode('INDIVIDUAL');
+
+        return;
+      }
     }
   };
 
   return {
     phase,
-    currentStep,
+    mode,
+    hidden,
     currentReps,
     targetReps,
+    currentAyahIndex,
     isComplete: phase === 'COMPLETE',
     actions: {
       advance,
+      startHiding,
+      showText,
     },
   };
 }
