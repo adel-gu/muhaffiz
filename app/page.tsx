@@ -34,7 +34,7 @@ export default function LandingPage() {
               className="py-6 px-12 text-lg rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:scale-105 transition-all duration-300 group"
               asChild
             >
-              <Link href="/setup">
+              <Link href="/memorization/settings">
                 Start Memorization Session
                 <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Link>
