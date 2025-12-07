@@ -31,8 +31,11 @@ export function QuranScript({ verses, phase, hidden, mode, currentAyahIndex }: Q
           ((mode === 'INDIVIDUAL' && idx <= currentAyahIndex) ||
             (mode === 'CUMULATIVE' && idx <= currentAyahIndex));
 
+        const shouldRecite =
+          (phase === 'MEMORIZATION' && mode === 'INDIVIDUAL' && idx === currentAyahIndex) ||
+          (mode === 'CUMULATIVE' && idx <= currentAyahIndex);
         return (
-          <div key={verse.verseKey}>
+          <div key={verse.verseKey} className={`${shouldRecite && 'bg-primary/10'}`}>
             {verse.textUthmani?.split(' ').map((word, index) => (
               <span
                 key={verse.words?.[index]?.id}
