@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export type Phase = 'FAMILIARIZATION' | 'MEMORIZATION' | 'COMPLETE';
 type MemorizationMode = 'INDIVIDUAL' | 'CUMULATIVE';
@@ -6,26 +6,34 @@ type MemorizationMode = 'INDIVIDUAL' | 'CUMULATIVE';
 interface UseMemorizationProps {
   targetReps: number;
   totalVerses: number;
+  onComplete?: () => void;
 }
 
-export function useMemorization({ targetReps, totalVerses }: UseMemorizationProps) {
+export function useMemorization({ targetReps, totalVerses, onComplete }: UseMemorizationProps) {
   const [phase, setPhase] = useState<Phase>('FAMILIARIZATION');
   const [currentReps, setCurrentReps] = useState(0);
 
   const [currentAyahIndex, setCurrentAyahIndex] = useState(0);
   const [mode, setMode] = useState<MemorizationMode>('INDIVIDUAL');
-  const [hidden, setHidden] = useState(false); // Controls blur
+  const [hidden, setHidden] = useState(false);
 
   const startHiding = () => setHidden(true);
   const showText = () => setHidden(false);
 
+  useEffect(() => {
+    if (phase === 'COMPLETE' && onComplete) {
+      onComplete();
+    }
+  }, [phase, onComplete]);
+
   const advance = () => {
     if (phase === 'FAMILIARIZATION') {
       const next = currentReps + 1;
+
       if (next >= targetReps) {
         setPhase('MEMORIZATION');
         setCurrentReps(0);
-        setHidden(true); // start blurred
+        setHidden(true);
       } else {
         setCurrentReps(next);
       }
@@ -34,22 +42,21 @@ export function useMemorization({ targetReps, totalVerses }: UseMemorizationProp
 
     if (phase === 'MEMORIZATION') {
       const next = currentReps + 1;
+
       if (next < targetReps) {
         setCurrentReps(next);
         return;
       }
 
-      // reps achieved for this task → reset
+      // completed this repetition cycle
       setCurrentReps(0);
 
       if (mode === 'INDIVIDUAL') {
-        // Done memorizing one ayah → now cumulative recall for all up to this ayah
         setMode('CUMULATIVE');
         return;
       }
 
       if (mode === 'CUMULATIVE') {
-        // Finished cumulative recall → move to next ayah
         const nextAyah = currentAyahIndex + 1;
 
         if (nextAyah >= totalVerses) {
@@ -59,8 +66,6 @@ export function useMemorization({ targetReps, totalVerses }: UseMemorizationProp
 
         setCurrentAyahIndex(nextAyah);
         setMode('INDIVIDUAL');
-
-        return;
       }
     }
   };

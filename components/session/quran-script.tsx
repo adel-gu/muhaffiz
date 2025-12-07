@@ -21,7 +21,6 @@ interface QuranScriptProps {
 }
 
 export function QuranScript({ verses, phase, hidden, mode, currentAyahIndex }: QuranScriptProps) {
-  console.log('Verses: ', verses);
   return (
     <div dir="rtl" className={cn(quranFont.className)}>
       {verses.map((verse, idx) => {

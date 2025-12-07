@@ -79,7 +79,6 @@ export class LocalQuranApiClient {
     }
 
     const data = await response.json();
-    console.log('Data: ', data);
     return {
       id: data.audio_file.id,
       audioUrl: data.audio_file.audio_url,
