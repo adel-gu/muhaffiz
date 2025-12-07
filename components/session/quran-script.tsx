@@ -23,7 +23,7 @@ interface QuranScriptProps {
 export function QuranScript({ verses, phase, hidden, mode, currentAyahIndex }: QuranScriptProps) {
   console.log('Verses: ', verses);
   return (
-    <div dir="rtl" className={cn(quranFont.className, 'flex flex-wrap p-6 leading-[3]')}>
+    <div dir="rtl" className={cn(quranFont.className)}>
       {verses.map((verse, idx) => {
         const shouldBlur =
           phase === 'MEMORIZATION' &&
@@ -35,7 +35,10 @@ export function QuranScript({ verses, phase, hidden, mode, currentAyahIndex }: Q
           (phase === 'MEMORIZATION' && mode === 'INDIVIDUAL' && idx === currentAyahIndex) ||
           (mode === 'CUMULATIVE' && idx <= currentAyahIndex);
         return (
-          <div key={verse.verseKey} className={`${shouldRecite && 'bg-primary/10'}`}>
+          <p
+            key={verse.verseKey}
+            className={cn(`${shouldRecite && 'bg-primary/10'}`, 'inline space-y-4')}
+          >
             {verse.textUthmani?.split(' ').map((word, index) => (
               <span
                 key={verse.words?.[index]?.id}
@@ -52,7 +55,7 @@ export function QuranScript({ verses, phase, hidden, mode, currentAyahIndex }: Q
               </span>
             ))}
             <span className="text-primary mx-1 text-4xl">{toArabicNumber(verse.verseNumber)}</span>
-          </div>
+          </p>
         );
       })}
     </div>
