@@ -16,6 +16,8 @@ interface MemorizationSettingsFormProps {
   reciters: RecitationResource[];
 }
 
+const RANGE_SIZE = 10;
+
 export function MemorizationSettingsForm({ chapters, reciters }: MemorizationSettingsFormProps) {
   const searchParams = useSearchParams();
 
@@ -62,6 +64,37 @@ export function MemorizationSettingsForm({ chapters, reciters }: MemorizationSet
     reps: repetitions.toString(),
   });
 
+  const handleStartChange = (val: number) => {
+    const start = Math.max(1, val);
+
+    // If end is too far → pull it back
+    if (endAyah - start > RANGE_SIZE) {
+      setStartAyah(start);
+      setEndAyah(start + RANGE_SIZE);
+      return;
+    }
+
+    // If user makes start > end → push end forward
+    if (start > endAyah) {
+      setStartAyah(start);
+      setEndAyah(start);
+      return;
+    }
+
+    setStartAyah(start);
+  };
+
+  const handleEndChange = (val: number) => {
+    let end = Math.max(val, startAyah);
+
+    // If range exceeds RANGE_SIZE → pull end back
+    if (end - startAyah > RANGE_SIZE) {
+      end = startAyah + RANGE_SIZE;
+    }
+
+    setEndAyah(end);
+  };
+
   React.useEffect(() => {
     const s = searchParams.get('surah');
     const st = searchParams.get('start');
@@ -101,13 +134,13 @@ export function MemorizationSettingsForm({ chapters, reciters }: MemorizationSet
                 id="start-ayah"
                 label="Start Ayah"
                 value={startAyah}
-                onValueChange={setStartAyah}
+                onValueChange={handleStartChange}
               />
               <InputNumElement
                 id="end-ayah"
                 label="End Ayah"
                 value={endAyah}
-                onValueChange={setEndAyah}
+                onValueChange={handleEndChange}
               />
             </div>
           </div>
