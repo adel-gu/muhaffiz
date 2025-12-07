@@ -1,9 +1,11 @@
 'use client';
 
+import { useRouter, useSearchParams } from 'next/navigation';
+
 import { Verse } from '@quranjs/api';
-import { ChapterRecitationWithSegments } from '@/lib/quran-foundation-api/local-client';
 
 import { useMemorization } from '@/hooks/use-memorization';
+import { ChapterRecitationWithSegments } from '@/lib/quran-foundation-api/local-client';
 import { getMemorizationInstruction } from '@/lib/quran-foundation-api/utils';
 
 import { QuranScript } from '@/components/session/quran-script';
@@ -18,10 +20,22 @@ interface SessionContainerProps {
 }
 
 export function SessionContainer({ verses, audioData, range, reps }: SessionContainerProps) {
-  // 1. Init Engine
+  const router = useRouter();
+  const params = useSearchParams();
+
   const engine = useMemorization({
     targetReps: reps,
     totalVerses: verses.length,
+    onComplete: () => {
+      const surah = params.get('surah');
+      const start = params.get('start');
+      const end = params.get('end');
+      const repsValue = params.get('reps');
+
+      router.push(
+        `/memorization/success?surah=${surah}&start=${start}&end=${end}&reps=${repsValue}`,
+      );
+    },
   });
 
   const currentVerseNumber = verses[engine.currentAyahIndex]?.verseNumber;
@@ -36,7 +50,7 @@ export function SessionContainer({ verses, audioData, range, reps }: SessionCont
   return (
     <main className="flex flex-col pb-10">
       <div className="container mx-auto px-4 py-8 space-y-8 flex-1">
-        {/* STATUS INDICATOR (Temporary, to show reps counting) */}
+        {/* STATUS INDICATOR (to show reps counting) */}
         <div className="text-center p-4 bg-muted/20 rounded-lg border space-y-1">
           {!engine.isComplete && <p className="text-xl text-primary">{instruction}</p>}
 
@@ -63,7 +77,6 @@ export function SessionContainer({ verses, audioData, range, reps }: SessionCont
 
       {/* FOOTER ACTIONS */}
       <div className="fixed bottom-0 left-0 right-0 p-4 bg-background border-t flex items-center justify-center gap-4">
-        {/* Existing Audio Player */}
         <AudioPlayer audio={audioData} range={range} />
 
         {/* THE ADVANCE BUTTON */}
