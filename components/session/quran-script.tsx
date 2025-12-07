@@ -37,7 +37,7 @@ export function QuranScript({ verses, phase, hidden, mode, currentAyahIndex }: Q
         return (
           <p
             key={verse.verseKey}
-            className={cn(`${shouldRecite && 'bg-primary/10'}`, 'inline space-y-4')}
+            className={cn(`${shouldRecite && 'bg-primary/10 py-2'}`, 'inline space-y-4')}
           >
             {verse.textUthmani?.split(' ').map((word, index) => (
               <span
