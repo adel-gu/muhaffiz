@@ -4,6 +4,8 @@ import { Verse } from '@quranjs/api';
 import { ChapterRecitationWithSegments } from '@/lib/quran-foundation-api/local-client';
 
 import { useMemorization } from '@/hooks/use-memorization';
+import { getMemorizationInstruction } from '@/lib/quran-foundation-api/utils';
+
 import { QuranScript } from '@/components/session/quran-script';
 import { AudioPlayer } from '@/components/session/audio-player';
 import { Button } from '@/components/ui/button';
@@ -22,18 +24,30 @@ export function SessionContainer({ verses, audioData, range, reps }: SessionCont
     totalVerses: verses.length,
   });
 
+  const currentVerseNumber = verses[engine.currentAyahIndex]?.verseNumber;
+
+  const instruction = getMemorizationInstruction({
+    phase: engine.phase,
+    mode: engine.mode,
+    currentVerseNumber,
+    firstVerseNumber: verses[0].verseNumber,
+  });
+
   return (
     <main className="flex flex-col pb-10">
       <div className="container mx-auto px-4 py-8 space-y-8 flex-1">
         {/* STATUS INDICATOR (Temporary, to show reps counting) */}
-        <div className="text-center p-4 bg-muted/20 rounded-lg border">
-          <p className="text-lg font-medium">
-            Phase: <span className="text-primary">{engine.phase}</span>
-          </p>
+        <div className="text-center p-4 bg-muted/20 rounded-lg border space-y-1">
+          {!engine.isComplete && <p className="text-sm text-muted-foreground">{instruction}</p>}
+
           {!engine.isComplete && (
-            <p className="text-sm text-muted-foreground">
-              Repetition: {engine.currentReps} / {engine.targetReps}
+            <p className="text-xs text-muted-foreground">
+              Repetition {engine.currentReps + 1} of {engine.targetReps}
             </p>
+          )}
+
+          {engine.isComplete && (
+            <p className="text-lg font-medium text-primary">Session complete.</p>
           )}
         </div>
 
