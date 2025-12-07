@@ -2,9 +2,7 @@ import { ChapterId } from '@quranjs/api';
 import { getVerses, getVersesAudio } from '@/lib/quran-foundation-api/data';
 
 import { Header } from '@/components/session/header';
-import { QuranScript } from '@/components/session/quran-script';
-import { Progress } from '@/components/session/progress';
-import { Actions } from '@/components/session/actions';
+import { SessionContainer } from '@/components/session/session-container';
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
@@ -27,14 +25,12 @@ export default async function page(props: { searchParams: SearchParams }) {
     to: endTs?.timestamp_to ?? Infinity,
   };
 
+  const repsCount = reps ? Number(reps) : 10;
+
   return (
-    <main>
+    <div>
       <Header />
-      <div>
-        <Progress />
-        <QuranScript verses={verses} />
-      </div>
-      <Actions audio={versesAudio} range={range} />
-    </main>
+      <SessionContainer verses={verses} audioData={versesAudio} range={range} reps={repsCount} />
+    </div>
   );
 }
