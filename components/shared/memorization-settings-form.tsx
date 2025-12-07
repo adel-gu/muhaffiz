@@ -1,15 +1,16 @@
 'use client';
 
 import * as React from 'react';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
 import { Chapter, RecitationResource } from '@quranjs/api';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { SheetClose } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { InputNumElement } from '@/components/settings/input-num-element';
 import { SelectElement, SelectOption } from '@/components/settings/select-element';
-import Link from 'next/link';
 
 interface MemorizationSettingsFormProps {
   chapters: Chapter[];
@@ -23,11 +24,19 @@ export function MemorizationSettingsForm({ chapters, reciters }: MemorizationSet
 
   // Form State
   const [surah, setSurah] = React.useState<string>(searchParams.get('surah') ?? '1');
+  const chapterVerses = React.useMemo(() => {
+    return chapters.find((c) => c.id === Number(surah))?.versesCount ?? 1;
+  }, [surah, chapters]);
+
   const [startAyah, setStartAyah] = React.useState<number>(
     searchParams.has('start') ? Number(searchParams.get('start')) : 1,
   );
   const [endAyah, setEndAyah] = React.useState<number>(
-    searchParams.has('end') ? Number(searchParams.get('end')) : 5,
+    searchParams.has('end')
+      ? Number(searchParams.get('end'))
+      : chapterVerses < 10
+        ? chapterVerses
+        : 10,
   );
   const [reciter, setReciter] = React.useState<string>(searchParams.get('reciter') ?? '1');
   const [repetitions, setRepetitions] = React.useState<number>(
@@ -65,16 +74,16 @@ export function MemorizationSettingsForm({ chapters, reciters }: MemorizationSet
   });
 
   const handleStartChange = (val: number) => {
-    const start = Math.max(1, val);
+    const start = Math.max(1, Math.min(val, chapterVerses));
 
     // If end is too far → pull it back
     if (endAyah - start > RANGE_SIZE) {
       setStartAyah(start);
-      setEndAyah(start + RANGE_SIZE);
+      setEndAyah(Math.min(start + RANGE_SIZE, chapterVerses));
       return;
     }
 
-    // If user makes start > end → push end forward
+    // If start > end → push end forward
     if (start > endAyah) {
       setStartAyah(start);
       setEndAyah(start);
@@ -87,9 +96,12 @@ export function MemorizationSettingsForm({ chapters, reciters }: MemorizationSet
   const handleEndChange = (val: number) => {
     let end = Math.max(val, startAyah);
 
-    // If range exceeds RANGE_SIZE → pull end back
+    // Hard clamp to chapter max
+    end = Math.min(end, chapterVerses);
+
+    // Enforce range-size limit
     if (end - startAyah > RANGE_SIZE) {
-      end = startAyah + RANGE_SIZE;
+      end = Math.min(startAyah + RANGE_SIZE, chapterVerses);
     }
 
     setEndAyah(end);
@@ -108,6 +120,18 @@ export function MemorizationSettingsForm({ chapters, reciters }: MemorizationSet
     if (r) setReciter(r);
     if (rep) setRepetitions(Number(rep));
   }, [searchParams]);
+
+  React.useEffect(() => {
+    // Pull ayahs back into valid range when Surah changes
+    setStartAyah((s) => Math.min(s, chapterVerses));
+    setEndAyah((e) => {
+      const safeEnd = Math.min(e, chapterVerses);
+      if (safeEnd - startAyah > RANGE_SIZE) {
+        return Math.min(startAyah + RANGE_SIZE, chapterVerses);
+      }
+      return safeEnd;
+    });
+  }, [chapterVerses, startAyah]);
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-2xl mx-auto">
@@ -175,12 +199,14 @@ export function MemorizationSettingsForm({ chapters, reciters }: MemorizationSet
       </Card>
 
       {/* Submit Action */}
-      <Button
-        asChild
-        className="py-6 text-lg font-bold tracking-wide shadow-lg shadow-primary/20 transition-all active:scale-[0.99]"
-      >
-        <Link href={`/memorization/session?${params.toString()}`}>Set settings</Link>
-      </Button>
+      <SheetClose asChild>
+        <Button
+          asChild
+          className="py-6 text-lg font-bold tracking-wide shadow-lg shadow-primary/20 transition-all active:scale-[0.99]"
+        >
+          <Link href={`/memorization/session?${params.toString()}`}>Set settings</Link>
+        </Button>
+      </SheetClose>
     </div>
   );
 }
