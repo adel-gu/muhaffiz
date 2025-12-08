@@ -4,7 +4,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
-import { Chapter, RecitationResource } from '@quranjs/api';
+import { Chapter } from '@quranjs/api';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SheetClose } from '@/components/ui/sheet';
@@ -14,7 +14,8 @@ import { SelectElement, SelectOption } from '@/components/settings/select-elemen
 
 interface MemorizationSettingsFormProps {
   chapters: Chapter[];
-  reciters: RecitationResource[];
+  formattedChapters: SelectOption[];
+  formattedReciters: SelectOption[];
   isDialog?: boolean;
 }
 
@@ -22,7 +23,8 @@ const RANGE_SIZE = 10;
 
 export function MemorizationSettingsForm({
   chapters,
-  reciters,
+  formattedChapters,
+  formattedReciters,
   isDialog = false,
 }: MemorizationSettingsFormProps) {
   const searchParams = useSearchParams();
@@ -46,28 +48,6 @@ export function MemorizationSettingsForm({
   const [reciter, setReciter] = React.useState<string>(searchParams.get('reciter') ?? '1');
   const [repetitions, setRepetitions] = React.useState<number>(
     searchParams.has('reps') ? Number(searchParams.get('reps')) : 10,
-  );
-
-  // Data Transformation: Convert raw data to SelectOption[]
-  const surahOptions: SelectOption[] = React.useMemo(
-    () =>
-      chapters.map((c) => ({
-        value: c.id.toString(),
-        label: `${c.id}. ${c.nameSimple}`,
-        subLabel: c.translatedName.name,
-        meta: c.nameArabic,
-      })),
-    [chapters],
-  );
-
-  const reciterOptions: SelectOption[] = React.useMemo(
-    () =>
-      reciters.map((r) => ({
-        value: r.id!.toString(),
-        label: `${r.id!}. ${r.reciterName!}`,
-        subLabel: r.style!,
-      })),
-    [reciters],
   );
 
   const params = new URLSearchParams({
@@ -155,7 +135,7 @@ export function MemorizationSettingsForm({
               placeholder="Select Surah"
               value={surah}
               onChange={setSurah}
-              options={surahOptions}
+              options={formattedChapters}
             />
 
             <div className="flex gap-4">
@@ -191,7 +171,7 @@ export function MemorizationSettingsForm({
               placeholder="Select Reciter"
               value={reciter}
               onChange={setReciter}
-              options={reciterOptions}
+              options={formattedReciters}
             />
             <InputNumElement
               id="reps"

@@ -1,3 +1,9 @@
+export const metadata = {
+  title: 'Memorization Settings',
+  description:
+    'Choose your Surah, ayah range, reciter, and cycles to begin a structured Quran memorization session.',
+};
+
 export default function Layout({
   children,
 }: Readonly<{
