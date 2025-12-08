@@ -2,14 +2,7 @@ import { Suspense } from 'react';
 
 import { BookOpen, Settings } from 'lucide-react';
 import { getChapters, getReciters } from '@/lib/quran-foundation-api/data';
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '../ui/button';
 import { MemorizationSettingsForm } from '../shared/memorization-settings-form';
 import Link from 'next/link';
