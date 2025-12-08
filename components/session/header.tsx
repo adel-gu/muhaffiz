@@ -15,7 +15,22 @@ import { MemorizationSettingsForm } from '../shared/memorization-settings-form';
 import Link from 'next/link';
 
 export async function Header() {
-  const [chapters, reciters] = await Promise.all([getChapters(), getReciters()]);
+  const [rawChapters, rawReciters] = await Promise.all([getChapters(), getReciters()]);
+
+  const chapterOptions = rawChapters.map((c) => ({
+    id: c.id,
+    value: c.id.toString(),
+    label: `${c.id}. ${c.nameSimple}`,
+    subLabel: c.translatedName.name,
+    meta: c.nameArabic,
+    versesCount: c.versesCount,
+  }));
+
+  const reciterOptions = rawReciters.map((r) => ({
+    value: r.id!.toString(),
+    label: `${r.id!}. ${r.reciterName!}`,
+    subLabel: r.style!,
+  }));
 
   return (
     <header className="flex items-center justify-between border-b py-2 px-4">
@@ -40,7 +55,11 @@ export async function Header() {
             <SheetTitle>Configure your Hifz session settings below.</SheetTitle>
             <SheetDescription>
               <Suspense>
-                <MemorizationSettingsForm chapters={chapters} reciters={reciters} isDialog={true} />
+                <MemorizationSettingsForm
+                  formattedChapters={chapterOptions}
+                  formattedReciters={reciterOptions}
+                  isDialog={true}
+                />
               </Suspense>
             </SheetDescription>
           </SheetHeader>

@@ -7,10 +7,12 @@ export default async function page() {
   const [rawChapters, rawReciters] = await Promise.all([getChapters(), getReciters()]);
 
   const chapterOptions = rawChapters.map((c) => ({
+    id: c.id,
     value: c.id.toString(),
     label: `${c.id}. ${c.nameSimple}`,
     subLabel: c.translatedName.name,
     meta: c.nameArabic,
+    versesCount: c.versesCount,
   }));
 
   const reciterOptions = rawReciters.map((r) => ({
@@ -22,7 +24,6 @@ export default async function page() {
   return (
     <Suspense>
       <MemorizationSettingsForm
-        chapters={rawChapters}
         formattedChapters={chapterOptions}
         formattedReciters={reciterOptions}
       />

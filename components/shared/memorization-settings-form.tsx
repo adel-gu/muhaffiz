@@ -4,17 +4,18 @@ import * as React from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
-import { Chapter } from '@quranjs/api';
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SheetClose } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { InputNumElement } from '@/components/settings/input-num-element';
 import { SelectElement, SelectOption } from '@/components/settings/select-element';
 
+interface formattedChapters extends SelectOption {
+  id: number;
+  versesCount: number;
+}
 interface MemorizationSettingsFormProps {
-  chapters: Chapter[];
-  formattedChapters: SelectOption[];
+  formattedChapters: formattedChapters[];
   formattedReciters: SelectOption[];
   isDialog?: boolean;
 }
@@ -22,7 +23,6 @@ interface MemorizationSettingsFormProps {
 const RANGE_SIZE = 10;
 
 export function MemorizationSettingsForm({
-  chapters,
   formattedChapters,
   formattedReciters,
   isDialog = false,
@@ -32,8 +32,8 @@ export function MemorizationSettingsForm({
   // Form State
   const [surah, setSurah] = React.useState<string>(searchParams.get('surah') ?? '1');
   const chapterVerses = React.useMemo(() => {
-    return chapters.find((c) => c.id === Number(surah))?.versesCount ?? 1;
-  }, [surah, chapters]);
+    return formattedChapters.find((c) => c.id === Number(surah))?.versesCount ?? 1;
+  }, [surah, formattedChapters]);
 
   const [startAyah, setStartAyah] = React.useState<number>(
     searchParams.has('start') ? Number(searchParams.get('start')) : 1,
