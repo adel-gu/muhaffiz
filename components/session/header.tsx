@@ -52,16 +52,14 @@ export async function Header() {
         </SheetTrigger>
         <SheetContent className="md:min-w-[600px] pt-6">
           <SheetHeader>
-            <SheetTitle>Configure your Hifz session settings below.</SheetTitle>
-            <SheetDescription>
-              <Suspense>
-                <MemorizationSettingsForm
-                  formattedChapters={chapterOptions}
-                  formattedReciters={reciterOptions}
-                  isDialog={true}
-                />
-              </Suspense>
-            </SheetDescription>
+            <SheetTitle className="my-2">Configure your Hifz session settings below.</SheetTitle>
+            <Suspense>
+              <MemorizationSettingsForm
+                formattedChapters={chapterOptions}
+                formattedReciters={reciterOptions}
+                isDialog={true}
+              />
+            </Suspense>
           </SheetHeader>
         </SheetContent>
       </Sheet>
