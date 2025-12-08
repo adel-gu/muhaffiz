@@ -5,7 +5,6 @@ import type { Metadata } from 'next';
 import { ChapterId } from '@quranjs/api';
 import { getVerses, getVersesAudio } from '@/lib/quran-foundation-api/data';
 
-import { Header } from '@/components/session/header';
 import { SessionContainer } from '@/components/session/session-container';
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
@@ -32,12 +31,9 @@ export default async function page(props: { searchParams: SearchParams }) {
   const repsCount = reps ? Number(reps) : 10;
 
   return (
-    <div>
-      <Header />
-      <Suspense>
-        <SessionContainer verses={verses} audioData={versesAudio} range={range} reps={repsCount} />
-      </Suspense>
-    </div>
+    <Suspense>
+      <SessionContainer verses={verses} audioData={versesAudio} range={range} reps={repsCount} />
+    </Suspense>
   );
 }
 
